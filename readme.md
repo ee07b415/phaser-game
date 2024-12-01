@@ -13,3 +13,15 @@ Your mission is to shoot the enemy ship and dodge its attacks to score as many p
 
 
 ![screenshot](screenshot.png)
+
+## Docker quick start
+```
+# Build and start the development container
+docker compose up dev
+
+# The game will be available at http://localhost:5173
+
+docker compose up prod
+
+# The game will be available at http://localhost:80
+```

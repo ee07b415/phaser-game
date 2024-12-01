@@ -1,4 +1,4 @@
-import { Physics, Math } from "phaser";
+import { Physics } from "phaser";
 import { Bullet } from "./Bullet";
 
 export class BlueEnemy extends Physics.Arcade.Sprite {
@@ -84,6 +84,45 @@ export class BlueEnemy extends Physics.Arcade.Sprite {
         }
     }
 
+    fireHeartPattern(bulletCount = 36) {
+        const scale = 100;  // Size
+        const a = 1;
+
+        // Start from -pi/2 to ensure we start from the top position
+        for (let i = 1; i < bulletCount; i++) {
+            const t = ((i / bulletCount) * Math.PI * 2) - (Math.PI / 2);
+            
+            // Heart shape calculation
+            const originalX = scale * a * (Math.sin(t) * Math.sqrt(Math.abs(Math.cos(t)))) / (Math.sin(t) + 1.4);
+            const originalY = -scale * a * Math.cos(t) * Math.sqrt(Math.abs(Math.cos(t))) / (Math.sin(t) + 1.4);
+            
+            // Rotate 90 degrees counter-clockwise: (x,y) -> (-y,x)
+            const x = -originalY;
+            const y = originalX;
+
+            const startPoint = new Phaser.Math.Vector2(
+                this.x + x,
+                this.y + y
+            );
+
+            // Calculate outward direction
+            const outwardX = x * 2;
+            const outwardY = y * 2;
+
+            const targetPoint = new Phaser.Math.Vector2(
+                this.x + outwardX,
+                this.y + outwardY
+            );
+
+            const bullet = this.bullets.get();
+            if (bullet) {
+                bullet.fire(startPoint.x, startPoint.y, targetPoint.x, targetPoint.y, "enemy-rock");
+                // Ensure all bullets have exactly the same speed
+                bullet.speed = Phaser.Math.GetSpeed(200, 1);
+            }
+        }
+    }
+    
     start() {
         this.isGameActive = true;
         this.lastRockAttackTime = this.scene.time.now;
@@ -105,7 +144,7 @@ export class BlueEnemy extends Physics.Arcade.Sprite {
         if (currentTime - this.lastRockAttackTime >= this.rockAttackInterval) {
             // Alternate between patterns
             if (this.currentPattern === 0) {
-                this.fireCirclePattern();
+                this.fireHeartPattern();
                 this.currentPattern = 1;
             } else {
                 this.fireSpiralPattern();
