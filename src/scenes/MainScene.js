@@ -1,10 +1,12 @@
 import { Scene } from "phaser";
 import { Player } from "../gameobjects/Player";
+import { Player2 } from "../gameobjects/Player2";
 import { BlueEnemy } from "../gameobjects/BlueEnemy";
 import { NumberStack } from "../systems/numberStack";  // Import the new system
 
 export class MainScene extends Scene {
     player = null;
+    player2 = null;
     enemy_blue = null;
     cursors = null;
 
@@ -59,6 +61,7 @@ export class MainScene extends Scene {
 
         // Player
         this.player = new Player({ scene: this });
+        this.player2 = new Player2({ scene: this });
 
         // Enemy
         this.enemy_blue = new BlueEnemy(this);
@@ -81,6 +84,12 @@ export class MainScene extends Scene {
                 .update_points(this.points);
         });
 
+        // Overlap player2 with enemy bullets
+        this.physics.add.overlap(this.enemy_blue.bullets, this.player2, (player2, bullet) => {
+            bullet.destroyBullet();
+        });
+
+
         // Overlap player with enemy bullets
         this.physics.add.overlap(this.enemy_blue.bullets, this.player, (player, bullet) => {
             bullet.destroyBullet();
@@ -97,6 +106,7 @@ export class MainScene extends Scene {
             this.scene.stop("MenuScene");
             this.scene.launch("HudScene", { remaining_time: this.game_over_timeout });
             this.player.start();
+            this.player2.start();
             this.enemy_blue.start();
 
             this.numberStack.setVisible(true);
@@ -127,6 +137,7 @@ export class MainScene extends Scene {
 
     update(time) {
         this.player.update();
+        this.player2.update();
         this.enemy_blue.update(this.player);
 
         // Player movement entries

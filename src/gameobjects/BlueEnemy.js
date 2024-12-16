@@ -84,7 +84,7 @@ export class BlueEnemy extends Physics.Arcade.Sprite {
         }
     }
 
-    fireHeartPattern(bulletCount = 36) {
+    fireHeartPattern(bulletCount = 24) {
         const scale = 100;  // Size
         const a = 1;
 
